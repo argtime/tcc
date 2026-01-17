@@ -1,17 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { 
   Calculator, 
   Settings as SettingsIcon, 
   History as HistoryIcon, 
   Plus, 
   Trash2, 
-  ChevronRight, 
   Leaf, 
   DollarSign, 
   Percent,
   Ruler,
-  Save,
-  Check
+  Save
 } from 'lucide-react';
 import clsx from 'clsx';
 import { twMerge } from 'tailwind-merge';
@@ -326,7 +324,7 @@ const SettingsView = () => {
   const [showTax, setShowTax] = useLocalStorage('showTaxCalculator', false);
   const [showDiscount, setShowDiscount] = useLocalStorage('showDiscount', false);
   const [defaultDiscount, setDefaultDiscount] = useLocalStorage('defaultDiscountPercent', 0);
-  const [hasCompletedOnboarding, setHasCompletedOnboarding] = useLocalStorage('hasCompletedOnboarding', true);
+  const [, setHasCompletedOnboarding] = useLocalStorage('hasCompletedOnboarding', true);
 
   const resetOnboarding = () => {
      setHasCompletedOnboarding(false);
