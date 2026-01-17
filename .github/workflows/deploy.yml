@@ -26,20 +26,44 @@ jobs:
         with:
           node-version: "20"
 
+      - name: Detect Project Path
+        id: detect
+        run: |
+          if [ -f "web/package.json" ]; then
+            echo "path=web" >> $GITHUB_OUTPUT
+            echo "Found project in web/"
+          elif [ -f "package.json" ]; then
+            echo "path=." >> $GITHUB_OUTPUT
+            echo "Found project in root"
+          else
+            # Try to find package.json (handling parent folders)
+            start_dir=$(find . -maxdepth 3 -name package.json -not -path '*/.*' | head -n 1 | xargs dirname)
+            if [ -n "$start_dir" ]; then
+               # Ensure cleaner path format
+               clean_dir=${start_dir#./}
+               echo "path=$clean_dir" >> $GITHUB_OUTPUT
+               echo "Found project in $clean_dir"
+            else
+               echo "Error: Could not find package.json in project."
+               ls -R
+               exit 1
+            fi
+          fi
+
       - name: Install dependencies
         run: |
-          cd web
+          cd "${{ steps.detect.outputs.path }}"
           npm install
 
       - name: Build
         run: |
-          cd web
+          cd "${{ steps.detect.outputs.path }}"
           npm run build
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: web/dist
+          path: "${{ steps.detect.outputs.path }}/dist"
 
   deploy:
     environment:
